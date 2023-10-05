@@ -8,6 +8,7 @@ from wrf import getvar
 
 from .LayerImageViewWidget import LayerImageViewWidget
 from .data_utils import get_times_from_filenamelist, get_layer_data
+from .custom_widgets import ButtonComboBox
 
 class LayerPlotWidget(QWidget):
     def __init__(self, parent = None):
@@ -23,14 +24,10 @@ class LayerPlotWidget(QWidget):
 
         self.plotting_widget = LayerImageViewWidget(self)
 
-        self.domain_box = QComboBox()
-        self.domain_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.property_box = QComboBox()
-        self.property_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.layer_box = QComboBox()
-        self.layer_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.time_box = QComboBox()
-        self.time_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.domain_box = ButtonComboBox()
+        self.property_box = ButtonComboBox()
+        self.layer_box = ButtonComboBox()
+        self.time_box = ButtonComboBox()
 
         self.cbar_box = QComboBox()
         self.cbar_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
@@ -71,6 +68,7 @@ class LayerPlotWidget(QWidget):
         data_selection_box_layout.addLayout(form_layout_data)
         data_selection_box.setLayout(data_selection_box_layout)
         bar_layout.addWidget(data_selection_box)
+
 
         animation_box = QGroupBox("Animation Options")
         animation_box_layout = QVBoxLayout()
@@ -127,43 +125,43 @@ class LayerPlotWidget(QWidget):
         self.setLayout(main_layout)
 
         # connect signals
-        self.domain_box.currentTextChanged.connect(self.onDomainChanged)
-        self.layer_box.currentTextChanged.connect(self.onLayerChanged)
-        self.property_box.currentTextChanged.connect(self.onPropertyChanged)
-        self.time_box.currentTextChanged.connect(self.onTimeChanged)
+        self.domain_box.combo_box.currentTextChanged.connect(self.onDomainChanged)
+        self.layer_box.combo_box.currentTextChanged.connect(self.onLayerChanged)
+        self.property_box.combo_box.currentTextChanged.connect(self.onPropertyChanged)
+        self.time_box.combo_box.currentTextChanged.connect(self.onTimeChanged)
         self.cbar_box.currentTextChanged.connect(self.onCbarChanged)
         self.scalingmode_box.currentTextChanged.connect(self.onScalingmodeChanged)
         self.minlimit_box.editingFinished.connect(self.onLimitsChanged)
         self.maxlimit_box.editingFinished.connect(self.onLimitsChanged)
 
     def setDomains(self, domains):
-        self.domain_box.clear()
+        self.domain_box.combo_box.clear()
 
         if domains:
-            self.domain_box.addItems(domains)
-            self.domain_box.setCurrentText(domains[0])
+            self.domain_box.combo_box.addItems(domains)
+            self.domain_box.combo_box.setCurrentText(domains[0])
 
     def setLayers(self, layers):
-        self.layer_box.clear()
+        self.layer_box.combo_box.clear()
 
         if layers:
-            self.layer_box.addItems(layers)
-            self.layer_box.setCurrentText('0') # TODO check if previous value would be still valid and then reset it.
+            self.layer_box.combo_box.addItems(layers)
+            self.layer_box.combo_box.setCurrentText('0') # TODO check if previous value would be still valid and then reset it.
 
     def setProperties(self, properties):
-        self.property_box.clear()
+        self.property_box.combo_box.clear()
 
         if properties:
-            self.property_box.addItems(properties)
+            self.property_box.combo_box.addItems(properties)
             if self.default_property in properties:
-                self.property_box.setCurrentText(self.default_property)
+                self.property_box.combo_box.setCurrentText(self.default_property)
 
     def setTimes(self, times):
-        self.time_box.clear()
+        self.time_box.combo_box.clear()
 
         if times:
-            self.time_box.addItems(times)
-            self.time_box.setCurrentText(times[0])
+            self.time_box.combo_box.addItems(times)
+            self.time_box.combo_box.setCurrentText(times[0])
 
     def onCbarChanged(self, cbar):
         if cbar:
@@ -194,8 +192,8 @@ class LayerPlotWidget(QWidget):
 
     def onPropertyChanged(self, property):
         if property:
-            domain = self.domain_box.currentText()
-            time_index = self.time_box.currentIndex()
+            domain = self.domain_box.combo_box.currentText()
+            time_index = self.time_box.combo_box.currentIndex()
             ncfile = Dataset(os.path.join(self.folder_name, self.files_dict[domain][time_index]))
             data = getvar(ncfile, property, meta=False)
 
@@ -264,11 +262,11 @@ class LayerPlotWidget(QWidget):
         self.setProperties(plot_properties)
 
     def updatePlot(self):
-        domain = self.domain_box.currentText()
-        time = self.time_box.currentText()
-        time_index = self.time_box.currentIndex()
-        layer = self.layer_box.currentText()
-        property = self.property_box.currentText()
+        domain = self.domain_box.combo_box.currentText()
+        time = self.time_box.combo_box.currentText()
+        time_index = self.time_box.combo_box.currentIndex()
+        layer = self.layer_box.combo_box.currentText()
+        property = self.property_box.combo_box.currentText()
 
         if not domain or not time or not layer or not property:
             return
@@ -283,11 +281,11 @@ class LayerPlotWidget(QWidget):
         self.plotting_widget.redraw()
 
     def updateLimits(self):
-        domain = self.domain_box.currentText()
-        property = self.property_box.currentText()
-        time = self.time_box.currentText()
-        time_index = self.time_box.currentIndex()
-        layer = self.layer_box.currentText()
+        domain = self.domain_box.combo_box.currentText()
+        property = self.property_box.combo_box.currentText()
+        time = self.time_box.combo_box.currentText()
+        time_index = self.time_box.combo_box.currentIndex()
+        layer = self.layer_box.combo_box.currentText()
         mode = self.scalingmode_box.currentText()
 
         val_min = val_max = None
