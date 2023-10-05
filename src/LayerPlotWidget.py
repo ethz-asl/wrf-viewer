@@ -47,6 +47,18 @@ class LayerPlotWidget(QWidget):
         self.maxlimit_box.setText('1.0')
         self.maxlimit_box.setReadOnly(True)
 
+        self.animation_mode_box = QComboBox()
+        self.animation_mode_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.animation_mode_box.addItems(['Time', 'Layer'])
+        self.animation_dt_box = QLineEdit(self)
+        self.animation_dt_box.setValidator(self.onlyDouble)
+        self.animation_dt_box.setText('1.0')
+        self.animation_play_button = QPushButton()
+        self.animation_play_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
+        self.animation_stop_button = QPushButton()
+        self.animation_stop_button.setIcon(self.style().standardIcon(QStyle.SP_MediaStop))
+        self.animation_save_button = QCheckBox()
+
         # plotting options
         bar_layout = QVBoxLayout()
         data_selection_box = QGroupBox("Data Options")
@@ -62,6 +74,18 @@ class LayerPlotWidget(QWidget):
 
         animation_box = QGroupBox("Animation Options")
         animation_box_layout = QVBoxLayout()
+
+        play_layout = QHBoxLayout()
+        play_layout.addWidget(self.animation_play_button)
+        play_layout.addWidget(self.animation_stop_button)
+        animation_box_layout.addLayout(play_layout)
+
+        form_layout_animation = QFormLayout()
+        form_layout_animation.addRow(QLabel("Save:"), self.animation_save_button)  
+        form_layout_animation.addRow(QLabel("Mode:"), self.animation_mode_box)  
+        form_layout_animation.addRow(QLabel("dt [s]:"), self.animation_dt_box)  
+        animation_box_layout.addLayout(form_layout_animation)
+
         animation_box.setLayout(animation_box_layout)
         bar_layout.addWidget(animation_box)
 
@@ -84,7 +108,7 @@ class LayerPlotWidget(QWidget):
 
         display_layout.addWidget(display_box)
 
-        limits_box = QGroupBox("Display options")
+        limits_box = QGroupBox("Scaling options")
         limits_box_layout = QVBoxLayout()
         form_layout_limits = QFormLayout()
         form_layout_limits.addRow(QLabel("Mode:"), self.scalingmode_box)
