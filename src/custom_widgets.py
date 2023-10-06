@@ -32,3 +32,15 @@ class ButtonComboBox(QWidget):
         if idx < 0:
             idx = self.combo_box.count() - 1
         self.combo_box.setCurrentIndex(idx)
+
+class ProgressWidget(QWidget):
+    def __init__(self, maximum, parent = None):
+        super(QWidget, self).__init__(parent)
+
+        self.setWindowTitle(' ')
+        self.progress_bar = QProgressBar(self)
+        self.progress_bar.setMaximum(maximum)
+        self.progress_widget_layout = QVBoxLayout(self)
+        self.progress_widget_layout.addWidget(QLabel('Computing limits ...'))
+        self.progress_widget_layout.addWidget(self.progress_bar)
+        self.show()

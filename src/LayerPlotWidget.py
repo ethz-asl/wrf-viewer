@@ -8,7 +8,7 @@ from wrf import getvar
 
 from .LayerImageViewWidget import LayerImageViewWidget
 from .data_utils import get_times_from_filenamelist, get_layer_data
-from .custom_widgets import ButtonComboBox
+from .custom_widgets import ButtonComboBox, ProgressWidget
 
 class LayerPlotWidget(QWidget):
     def __init__(self, parent = None):
@@ -302,23 +302,37 @@ class LayerPlotWidget(QWidget):
                 val_min = np.inf
                 val_max = -np.inf
 
-                for file in self.files_dict[domain]:
+                progress_widget = ProgressWidget(len(self.files_dict[domain]))
+
+                for i, file in enumerate(self.files_dict[domain]):
                     slice_data = get_layer_data(os.path.join(self.folder_name, file), property, int(layer))
 
                     if not (slice_data is None):
                         val_max = max(val_max, slice_data.max())
                         val_min = min(val_min, slice_data.min())
 
+                    progress_widget.progress_bar.setValue(i)
+                    QApplication.processEvents()
+
+                progress_widget.close()
+
         elif mode == 'Auto (domain)':
             if property and domain:
                 val_min = np.inf
                 val_max = -np.inf
 
-                for file in self.files_dict[domain]:
+                progress_widget = ProgressWidget(len(self.files_dict[domain]))
+
+                for i, file in enumerate(self.files_dict[domain]):
                     ncfile = Dataset(os.path.join(self.folder_name, file))
                     data = getvar(ncfile, property, meta=False)
                     val_max = max(val_max, data.max())
                     val_min = min(val_min, data.min())
+
+                    progress_widget.progress_bar.setValue(i)
+                    QApplication.processEvents()
+
+                progress_widget.close()
 
         if val_min and val_max:
             self.minlimit_box.setText("{:.2f}".format(val_min))
