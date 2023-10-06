@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QDoubleValidator
+from PyQt5.QtCore import QTimer
 
 from netCDF4 import Dataset
 import numpy as np
@@ -124,6 +125,10 @@ class LayerPlotWidget(QWidget):
         main_layout.addLayout(display_layout)
         self.setLayout(main_layout)
 
+        # animation
+        self.animation_timer = QTimer(self)
+        self.animation_timer.timeout.connect(self.animationStep)
+
         # connect signals
         self.domain_box.combo_box.currentTextChanged.connect(self.onDomainChanged)
         self.layer_box.combo_box.currentTextChanged.connect(self.onLayerChanged)
@@ -133,6 +138,9 @@ class LayerPlotWidget(QWidget):
         self.scalingmode_box.currentTextChanged.connect(self.onScalingmodeChanged)
         self.minlimit_box.editingFinished.connect(self.onLimitsChanged)
         self.maxlimit_box.editingFinished.connect(self.onLimitsChanged)
+        self.animation_play_button.clicked.connect(self.onAnimationPlayPressed)
+        self.animation_stop_button.clicked.connect(self.onAnimationStopPressed)
+        self.animation_dt_box.editingFinished.connect(self.onAnimationDtChanged)
 
     def setDomains(self, domains):
         self.domain_box.combo_box.clear()
@@ -162,6 +170,21 @@ class LayerPlotWidget(QWidget):
         if times:
             self.time_box.combo_box.addItems(times)
             self.time_box.combo_box.setCurrentText(times[0])
+
+    def onAnimationDtChanged(self):
+        dt = self.animation_dt_box.text()
+        if dt:
+            if self.animation_timer.isActive():
+                self.animation_timer.stop()
+                self.animation_timer.start(float(dt) * 1000)
+
+    def onAnimationPlayPressed(self):
+        dt = self.animation_dt_box.text()
+        if dt:
+            self.animation_timer.start(float(dt) * 1000)
+
+    def onAnimationStopPressed(self):
+        self.animation_timer.stop()
 
     def onCbarChanged(self, cbar):
         if cbar:
@@ -338,3 +361,11 @@ class LayerPlotWidget(QWidget):
             self.minlimit_box.setText("{:.2f}".format(val_min))
             self.maxlimit_box.setText("{:.2f}".format(val_max))
             self.plotting_widget.updateLimits(val_min, val_max)
+
+    def animationStep(self):
+        mode = self.animation_mode_box.currentText()
+        if mode == 'Time':
+            self.time_box.onForwardPressed()
+
+        elif mode == 'Layer':
+            self.layer_box.onForwardPressed()
