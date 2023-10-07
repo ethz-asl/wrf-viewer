@@ -15,3 +15,6 @@ class LayerImageViewWidget(pg.ImageView):
 
     def plot(self, slice_data, title):
         self.setImage(slice_data, autoLevels=False)
+
+    def saveImage(self, filename):
+        self.export(filename)

@@ -371,13 +371,14 @@ class LayerPlotWidget(QWidget):
     def animationStep(self):
         animation_mode = self.animation_mode_box.currentText()
         scaling_mode = self.scalingmode_box.currentText()
-            
+
         if animation_mode == 'Time':
             if scaling_mode != 'Auto (layer)' or scaling_mode == 'Auto (all data)' or scaling_mode == 'Custom':
                 index = self.scalingmode_box.findText('Auto (layer)')
                 self.scalingmode_box.setCurrentIndex(index)
 
             self.time_box.onForwardPressed()
+            index_animation = self.time_box.combo_box.currentIndex()
 
         elif animation_mode == 'Layer':
             if scaling_mode != 'Auto (timestep)' or scaling_mode == 'Auto (all data)' or scaling_mode == 'Custom':
@@ -385,3 +386,9 @@ class LayerPlotWidget(QWidget):
                 self.scalingmode_box.setCurrentIndex(index)
 
             self.layer_box.onForwardPressed()
+            index_animation = self.layer_box.combo_box.currentIndex()
+
+        if self.animation_save_button.isChecked():
+            property = self.property_box.combo_box.currentText()
+            filename = property + '_' + animation_mode + str(index_animation).zfill(6) + '.png'
+            self.plotting_widget.saveImage(os.path.join(self.folder_name, filename))
