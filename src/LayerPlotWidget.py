@@ -35,7 +35,7 @@ class LayerPlotWidget(QWidget):
         self.cbar_box.addItems(['jet', 'viridis', 'turbo', 'rainbow', 'gray', 'ocean'])
         self.scalingmode_box = QComboBox()
         self.scalingmode_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.scalingmode_box.addItems(['Auto (single)', 'Auto (layer)', 'Auto (domain)', 'Custom'])
+        self.scalingmode_box.addItems(['Auto (image)', 'Auto (timestep)', 'Auto (layer)', 'Auto (all data)', 'Custom'])
         self.minlimit_box = QLineEdit(self)
         self.minlimit_box.setValidator(self.onlyDouble)
         self.minlimit_box.setText('0.0')
@@ -202,7 +202,7 @@ class LayerPlotWidget(QWidget):
             self.updatePlot()
 
             mode = self.scalingmode_box.currentText()
-            if mode == 'Auto (single)' or mode == 'Auto (layer)':
+            if mode == 'Auto (image)' or mode == 'Auto (layer)':
                 self.updateLimits()
 
     def onLimitsChanged(self):
@@ -259,7 +259,7 @@ class LayerPlotWidget(QWidget):
             self.updatePlot()
 
             mode = self.scalingmode_box.currentText()
-            if mode == 'Auto (single)':
+            if mode == 'Auto (image)' or mode == 'Auto (timestep)':
                 self.updateLimits()
 
     def setFilesDict(self, folder_name, files_dict):
@@ -312,13 +312,19 @@ class LayerPlotWidget(QWidget):
         mode = self.scalingmode_box.currentText()
 
         val_min = val_max = None
-        if mode == 'Auto (single)':
+        if mode == 'Auto (image)':
             if property and domain and layer and time:
                 slice_data = get_layer_data(os.path.join(self.folder_name, self.files_dict[domain][time_index]), property, int(layer))
 
                 if not (slice_data is None):
                     val_min = slice_data.min()
                     val_max = slice_data.max()
+
+        elif mode == 'Auto (timestep)':
+            ncfile = Dataset(os.path.join(self.folder_name, self.files_dict[domain][time_index]))
+            data = getvar(ncfile, property, meta=False)
+            val_max = data.max()
+            val_min = data.min()
 
         elif mode == 'Auto (layer)':
             if property and domain and layer:
@@ -339,7 +345,7 @@ class LayerPlotWidget(QWidget):
 
                 progress_widget.close()
 
-        elif mode == 'Auto (domain)':
+        elif mode == 'Auto (all data)':
             if property and domain:
                 val_min = np.inf
                 val_max = -np.inf
@@ -363,9 +369,19 @@ class LayerPlotWidget(QWidget):
             self.plotting_widget.updateLimits(val_min, val_max)
 
     def animationStep(self):
-        mode = self.animation_mode_box.currentText()
-        if mode == 'Time':
+        animation_mode = self.animation_mode_box.currentText()
+        scaling_mode = self.scalingmode_box.currentText()
+            
+        if animation_mode == 'Time':
+            if scaling_mode != 'Auto (layer)' or scaling_mode == 'Auto (all data)' or scaling_mode == 'Custom':
+                index = self.scalingmode_box.findText('Auto (layer)')
+                self.scalingmode_box.setCurrentIndex(index)
+
             self.time_box.onForwardPressed()
 
-        elif mode == 'Layer':
+        elif animation_mode == 'Layer':
+            if scaling_mode != 'Auto (timestep)' or scaling_mode == 'Auto (all data)' or scaling_mode == 'Custom':
+                index = self.scalingmode_box.findText('Auto (timestep)')
+                self.scalingmode_box.setCurrentIndex(index)
+
             self.layer_box.onForwardPressed()
