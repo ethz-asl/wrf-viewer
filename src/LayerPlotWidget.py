@@ -363,7 +363,7 @@ class LayerPlotWidget(QWidget):
 
                 progress_widget.close()
 
-        if val_min and val_max:
+        if (not (val_min is None)) and (not (val_max is None)):
             self.minlimit_box.setText("{:.2f}".format(val_min))
             self.maxlimit_box.setText("{:.2f}".format(val_max))
             self.plotting_widget.updateLimits(val_min, val_max)
