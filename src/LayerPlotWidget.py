@@ -32,7 +32,7 @@ class LayerPlotWidget(QWidget):
 
         self.cbar_box = QComboBox()
         self.cbar_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.cbar_box.addItems(['jet', 'viridis', 'turbo', 'rainbow', 'gray', 'ocean'])
+        self.cbar_box.addItems(['jet', 'viridis', 'turbo', 'rainbow', 'gray', 'ocean', 'terrain'])
         self.scalingmode_box = QComboBox()
         self.scalingmode_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
         self.scalingmode_box.addItems(['Auto (image)', 'Auto (timestep)', 'Auto (layer)', 'Auto (all data)', 'Custom'])
