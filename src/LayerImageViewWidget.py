@@ -1,4 +1,5 @@
 import pyqtgraph as pg
+import numpy as np
 
 class LayerImageViewWidget(pg.ImageView):
     def __init__(self, parent=None):
@@ -14,7 +15,7 @@ class LayerImageViewWidget(pg.ImageView):
         self.setLevels(min=val_min, max=val_max)
 
     def plot(self, slice_data, title):
-        self.setImage(slice_data, autoLevels=False)
+        self.setImage(np.fliplr(slice_data.T), autoLevels=False)
 
     def saveImage(self, filename):
         self.export(filename)
