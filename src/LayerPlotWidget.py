@@ -50,7 +50,7 @@ class LayerPlotWidget(QWidget):
         self.animation_mode_box.addItems(['Time', 'Layer'])
         self.animation_dt_box = QLineEdit(self)
         self.animation_dt_box.setValidator(self.onlyDouble)
-        self.animation_dt_box.setText('1.0')
+        self.animation_dt_box.setText('0.1')
         self.animation_play_button = QPushButton()
         self.animation_play_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.animation_stop_button = QPushButton()
@@ -143,18 +143,26 @@ class LayerPlotWidget(QWidget):
         self.animation_dt_box.editingFinished.connect(self.onAnimationDtChanged)
 
     def setDomains(self, domains):
+        previous_domain = self.domain_box.combo_box.currentText()
         self.domain_box.combo_box.clear()
 
         if domains:
             self.domain_box.combo_box.addItems(domains)
-            self.domain_box.combo_box.setCurrentText(domains[0])
+            if previous_domain in domains:
+                self.domain_box.combo_box.setCurrentText(previous_domain)
+            else:
+                self.domain_box.combo_box.setCurrentText(domains[0])
 
     def setLayers(self, layers):
+        previous_layer = self.layer_box.combo_box.currentText()
         self.layer_box.combo_box.clear()
 
         if layers:
             self.layer_box.combo_box.addItems(layers)
-            self.layer_box.combo_box.setCurrentText('0') # TODO check if previous value would be still valid and then reset it.
+            if previous_layer in layers:
+                self.layer_box.combo_box.setCurrentText(previous_layer)
+            else:
+                self.layer_box.combo_box.setCurrentText('0')
 
     def setProperties(self, properties):
         self.property_box.combo_box.clear()
@@ -163,13 +171,21 @@ class LayerPlotWidget(QWidget):
             self.property_box.combo_box.addItems(properties)
             if self.default_property in properties:
                 self.property_box.combo_box.setCurrentText(self.default_property)
+            else:
+                self.property_box.combo_box.setCurrentText(properties[0])
+
 
     def setTimes(self, times):
+        previous_time = self.time_box.combo_box.currentText()
         self.time_box.combo_box.clear()
 
         if times:
             self.time_box.combo_box.addItems(times)
-            self.time_box.combo_box.setCurrentText(times[0])
+
+            if previous_time in times:
+                self.time_box.combo_box.setCurrentText(previous_time)
+            else:
+                self.time_box.combo_box.setCurrentText(times[0])
 
     def onAnimationDtChanged(self):
         dt = self.animation_dt_box.text()
