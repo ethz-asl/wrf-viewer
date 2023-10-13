@@ -39,3 +39,10 @@ class CustomTabWidget(QWidget):
             self.plotting_init = True
 
         self.plot_widget.onDataFolderSet(value)
+
+    def onDataFileSet(self, value):
+        if not self.plotting_init:
+            self.tab_widget.addTab(self.tabs[1], self.tab_names[1])
+            self.tab_widget.setCurrentIndex(1)
+            self.plotting_init = True
+        print('TODO', value)

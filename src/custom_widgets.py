@@ -4,11 +4,11 @@ class ButtonComboBox(QWidget):
     def __init__(self, parent = None):
         super(QWidget, self).__init__(parent)
 
-        self.combo_box = QComboBox()
+        self.combo_box = QComboBox(self)
         self.combo_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.forward_button = QPushButton()
+        self.forward_button = QPushButton(self)
         self.forward_button.setIcon(self.style().standardIcon(QStyle.SP_ArrowForward))
-        self.back_button = QPushButton()
+        self.back_button = QPushButton(self)
         self.back_button.setIcon(self.style().standardIcon(QStyle.SP_ArrowBack))
 
         main_layout = QHBoxLayout()

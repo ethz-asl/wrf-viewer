@@ -22,20 +22,4 @@ class WidgetPlotData(QWidget):
 
 
     def onDataFolderSet(self, folder_name):
-        all_files = os.listdir(folder_name)
-
-        wrfout_files = [f for f in all_files if 'wrfout' in f]
-
-        files_dict = {}
-
-        for file in wrfout_files:
-            splitted = file.split('_')
-            if not splitted[1] in files_dict.keys():
-                files_dict[splitted[1]] = []
-
-            files_dict[splitted[1]].append(file)
-
-        for key in files_dict.keys():
-            files_dict[key].sort()
-
-        self.layer_plot_widget.setFilesDict(folder_name, files_dict)
+        self.layer_plot_widget.setFolderName(folder_name)
