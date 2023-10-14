@@ -45,4 +45,6 @@ class CustomTabWidget(QWidget):
             self.tab_widget.addTab(self.tabs[1], self.tab_names[1])
             self.tab_widget.setCurrentIndex(1)
             self.plotting_init = True
-        print('TODO', value)
+
+        self.plot_widget.onDataFileSet(value)
+

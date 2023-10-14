@@ -20,6 +20,9 @@ class WidgetPlotData(QWidget):
 
         self.layout.addWidget(self.tab_widget)
 
-
     def onDataFolderSet(self, folder_name):
         self.layer_plot_widget.setFolderName(folder_name)
+
+    def onDataFileSet(self, folder_name):
+        self.layer_plot_widget.setFileName(folder_name)
+

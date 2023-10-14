@@ -2,16 +2,13 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtGui import QDoubleValidator
 from PyQt5.QtCore import QTimer
 
-from netCDF4 import Dataset
 import numpy as np
 import os
 import sip
-from wrf import getvar
 
+from .HDF5FileInterface import HDF5FileInterface
 from .LayerImageViewWidget import LayerImageViewWidget
 from .WrfoutFolderInterface import WrfoutFolderInterface
-from .data_utils import get_times_from_filenamelist, get_layer_data
-from .custom_widgets import ButtonComboBox, ProgressWidget
 
 class LayerPlotWidget(QWidget):
     def __init__(self, parent = None):
@@ -193,6 +190,17 @@ class LayerPlotWidget(QWidget):
 
         self.data_interface.setFolderName(folder_name)
 
+    def setFileName(self, folder_name):
+        if not isinstance(self.data_interface, HDF5FileInterface):
+            self.data_selection_box_layout.removeWidget(self.data_interface)
+            sip.delete(self.data_interface)
+            scaling_mode = self.scalingmode_box.currentText()
+            self.data_interface = HDF5FileInterface(scaling_mode, self)
+            self.data_selection_box_layout.addWidget(self.data_interface)
+            self.data_interface.limits_changed.connect(self.onAutoLimitsChanged)
+            self.data_interface.data_changed.connect(self.updatePlot)
+
+        self.data_interface.setFileName(folder_name)
 
     def animationStep(self):
         animation_mode = self.animation_mode_box.currentText()

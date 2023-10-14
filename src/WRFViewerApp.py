@@ -32,7 +32,7 @@ class WRFViewerApp(QObject):
 
     def connectSignals(self):
         self.data_folder_set.connect(self.window.tab_widget.onDataFolderSet)
-        self.data_folder_set.connect(self.window.tab_widget.onDataFileSet)
+        self.data_file_set.connect(self.window.tab_widget.onDataFileSet)
 
     def initDatasetFolder(self):
         folder_name = QFileDialog.getExistingDirectory(None, "Select data folder", '.')
