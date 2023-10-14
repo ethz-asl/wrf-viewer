@@ -9,6 +9,7 @@ import sip
 from .HDF5FileInterface import HDF5FileInterface
 from .LayerImageViewWidget import LayerImageViewWidget
 from .WrfoutFolderInterface import WrfoutFolderInterface
+from .custom_widgets import CustomComboBox, CustomLineEdit
 
 class LayerPlotWidget(QWidget):
     def __init__(self, parent = None):
@@ -18,33 +19,15 @@ class LayerPlotWidget(QWidget):
         self.files_dict = None
         self.folder_name = None
 
-        self.onlyDouble = QDoubleValidator()
-        self.onlyDouble.setDecimals(2)
-        self.onlyDouble.setNotation(QDoubleValidator.StandardNotation)
-
         self.plotting_widget = LayerImageViewWidget(self)
 
-        self.cbar_box = QComboBox()
-        self.cbar_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.cbar_box.addItems(['jet', 'viridis', 'turbo', 'rainbow', 'gray', 'ocean', 'terrain'])
-        self.scalingmode_box = QComboBox()
-        self.scalingmode_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.scalingmode_box.addItems(['Auto (image)', 'Auto (timestep)', 'Auto (layer)', 'Auto (all data)', 'Custom'])
-        self.minlimit_box = QLineEdit(self)
-        self.minlimit_box.setValidator(self.onlyDouble)
-        self.minlimit_box.setText('0.0')
-        self.minlimit_box.setReadOnly(True)
-        self.maxlimit_box = QLineEdit(self)
-        self.maxlimit_box.setValidator(self.onlyDouble)
-        self.maxlimit_box.setText('1.0')
-        self.maxlimit_box.setReadOnly(True)
+        self.cbar_box = CustomComboBox(['jet', 'viridis', 'turbo', 'rainbow', 'gray', 'ocean', 'terrain'])
+        self.scalingmode_box = CustomComboBox(['Auto (image)', 'Auto (timestep)', 'Auto (layer)', 'Auto (all data)', 'Custom'])
+        self.minlimit_box = CustomLineEdit('0.0', True, self)
+        self.maxlimit_box = CustomLineEdit('1.0', True, self)
 
-        self.animation_mode_box = QComboBox()
-        self.animation_mode_box.setSizeAdjustPolicy(QComboBox.AdjustToContents)
-        self.animation_mode_box.addItems(['Time', 'Layer'])
-        self.animation_dt_box = QLineEdit(self)
-        self.animation_dt_box.setValidator(self.onlyDouble)
-        self.animation_dt_box.setText('0.1')
+        self.animation_mode_box = CustomComboBox(['Time', 'Layer'])
+        self.animation_dt_box = CustomLineEdit('0.1', False, self)
         self.animation_play_button = QPushButton()
         self.animation_play_button.setIcon(self.style().standardIcon(QStyle.SP_MediaPlay))
         self.animation_stop_button = QPushButton()

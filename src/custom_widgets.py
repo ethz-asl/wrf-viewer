@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QWidget
+from PyQt5.QtGui import QDoubleValidator
 
 class ButtonComboBox(QWidget):
     def __init__(self, parent = None):
@@ -44,3 +46,29 @@ class ProgressWidget(QWidget):
         self.progress_widget_layout.addWidget(QLabel('Computing limits ...'))
         self.progress_widget_layout.addWidget(self.progress_bar)
         self.show()
+
+class ErrorBox(QMessageBox):
+    def __init__(self, title, message):
+        super(QWidget, self).__init__()
+        self.setWindowTitle(str(title))
+        self.setText(str(message))
+        self.setIcon(QMessageBox.Critical)
+
+class CustomComboBox(QComboBox):
+    def __init__(self, items, parent = None):
+        super().__init__(parent)
+
+        self.setSizeAdjustPolicy(QComboBox.AdjustToContents)
+        self.addItems(items)
+
+class CustomLineEdit(QLineEdit):
+    def __init__(self, value, read_only = False, parent = None):
+        super().__init__(parent)
+
+        self.validator = QDoubleValidator()
+        self.validator.setDecimals(2)
+        self.validator.setNotation(QDoubleValidator.StandardNotation)
+
+        self.setValidator(self.validator)
+        self.setText(str(value))
+        self.setReadOnly(read_only)

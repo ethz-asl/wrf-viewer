@@ -7,6 +7,7 @@ from PyQt5.QtCore import pyqtSignal, QObject
 from PyQt5.QtWidgets import QApplication, QFileDialog, QMessageBox
 
 from .MainWindow import MainWindow
+from .custom_widgets import ErrorBox
 
 class WRFViewerApp(QObject):
     data_folder_set = pyqtSignal(str)
@@ -45,10 +46,7 @@ class WRFViewerApp(QObject):
             if len(wrfout_files) > 0:
                 self.data_folder_set.emit(folder_name)
             else:
-                self.error_box = QMessageBox()
-                self.error_box.setWindowTitle("Invalid Folder")
-                self.error_box.setText(str('No wrfout files present in the selected folder'))
-                self.error_box.setIcon(QMessageBox.Critical)
+                self.error_box = ErrorBox('Invalid Folder', 'No wrfout files present in the selected folder')
                 self.error_box.show()
 
     def initDatasetFile(self):
@@ -61,8 +59,5 @@ class WRFViewerApp(QObject):
 
                 self.data_file_set.emit(file_name)
             except:
-                self.error_box = QMessageBox()
-                self.error_box.setWindowTitle("Invalid File")
-                self.error_box.setText(str('Could not open h5py file'))
-                self.error_box.setIcon(QMessageBox.Critical)
+                self.error_box = ErrorBox('Invalid File', 'Could not open h5py file')
                 self.error_box.show()
