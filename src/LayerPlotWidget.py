@@ -190,7 +190,8 @@ class LayerPlotWidget(QWidget):
         scaling_mode = self.scalingmode_box.currentText()
 
         if animation_mode == 'Time':
-            if scaling_mode != 'Auto (layer)' or scaling_mode == 'Auto (all data)' or scaling_mode == 'Custom':
+            supported_modes = ['Auto (layer)', 'Auto (all data)', 'Custom']
+            if not any([scaling_mode == mode for mode in supported_modes]):
                 index = self.scalingmode_box.findText('Auto (layer)')
                 self.scalingmode_box.setCurrentIndex(index)
 
@@ -198,7 +199,8 @@ class LayerPlotWidget(QWidget):
             index_animation = self.data_interface.time_box.combo_box.currentIndex()
 
         elif animation_mode == 'Layer':
-            if scaling_mode != 'Auto (timestep)' or scaling_mode == 'Auto (all data)' or scaling_mode == 'Custom':
+            supported_modes = ['Auto (timestep)', 'Auto (all data)', 'Custom']
+            if not any([scaling_mode == mode for mode in supported_modes]):
                 index = self.scalingmode_box.findText('Auto (timestep)')
                 self.scalingmode_box.setCurrentIndex(index)
 
