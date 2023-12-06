@@ -7,7 +7,7 @@ import numpy as np
 import os
 from wrf import getvar
 
-from .data_utils import get_times_from_filenamelist, get_layer_data
+from .data_utils import get_times_from_filenamelist, get_layer_data, get_sample_data
 from .custom_widgets import ButtonComboBox, ProgressWidget
 
 class WrfoutFolderInterface(QWidget):
@@ -116,8 +116,7 @@ class WrfoutFolderInterface(QWidget):
         if property:
             domain = self.domain_box.combo_box.currentText()
             time_index = self.time_box.combo_box.currentIndex()
-            ncfile = Dataset(os.path.join(self.folder_name, self.files_dict[domain][time_index]))
-            data = getvar(ncfile, property, meta=False)
+            data = get_sample_data(os.path.join(self.folder_name, self.files_dict[domain][time_index]), property)
 
             if len(data.shape) == 3:
                 num_layers = data.shape[0]
@@ -194,6 +193,9 @@ class WrfoutFolderInterface(QWidget):
             except:
                 pass
 
+        if all(item in all_properties for item in ['U', 'V']):
+            plot_properties.append('S')
+
         self.setDomains(domains)
         self.setProperties(plot_properties)
 
@@ -214,8 +216,7 @@ class WrfoutFolderInterface(QWidget):
                     val_max = slice_data.max()
 
         elif self.scaling_mode == 'Auto (timestep)':
-            ncfile = Dataset(os.path.join(self.folder_name, self.files_dict[domain][time_index]))
-            data = getvar(ncfile, property, meta=False)
+            data = get_sample_data(os.path.join(self.folder_name, self.files_dict[domain][time_index]), property)
             val_max = data.max()
             val_min = data.min()
 
@@ -246,8 +247,7 @@ class WrfoutFolderInterface(QWidget):
                 progress_widget = ProgressWidget(len(self.files_dict[domain]))
 
                 for i, file in enumerate(self.files_dict[domain]):
-                    ncfile = Dataset(os.path.join(self.folder_name, file))
-                    data = getvar(ncfile, property, meta=False)
+                    data = get_sample_data(os.path.join(self.folder_name, file), property)
                     val_max = max(val_max, data.max())
                     val_min = min(val_min, data.min())
 

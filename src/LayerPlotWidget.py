@@ -6,7 +6,7 @@ import numpy as np
 import os
 import sip
 
-from .HDF5FileInterface import HDF5FileInterface
+from .NcFileInterface import NcFileInterface
 from .LayerImageViewWidget import LayerImageViewWidget
 from .WrfoutFolderInterface import WrfoutFolderInterface
 from .custom_widgets import CustomComboBox, CustomLineEdit
@@ -174,11 +174,11 @@ class LayerPlotWidget(QWidget):
         self.data_interface.setFolderName(folder_name)
 
     def setFileName(self, folder_name):
-        if not isinstance(self.data_interface, HDF5FileInterface):
+        if not isinstance(self.data_interface, NcFileInterface):
             self.data_selection_box_layout.removeWidget(self.data_interface)
             sip.delete(self.data_interface)
             scaling_mode = self.scalingmode_box.currentText()
-            self.data_interface = HDF5FileInterface(scaling_mode, self)
+            self.data_interface = NcFileInterface(scaling_mode, self)
             self.data_selection_box_layout.addWidget(self.data_interface)
             self.data_interface.limits_changed.connect(self.onAutoLimitsChanged)
             self.data_interface.data_changed.connect(self.updatePlot)

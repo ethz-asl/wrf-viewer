@@ -9,7 +9,7 @@ class WidgetLoadData(QWidget):
         self.load_db_button_folder.setMaximumWidth(400)
         self.load_db_button_folder.setShortcut('Ctrl+W')
 
-        self.load_db_button_file = QPushButton('Select hdf5 dataset file', self)
+        self.load_db_button_file = QPushButton('Select nc dataset file', self)
         self.load_db_button_file.setMaximumWidth(400)
         self.load_db_button_file.setShortcut('Ctrl+L')
 

@@ -1,5 +1,5 @@
+from netCDF4 import Dataset
 import os
-import h5py
 import sys
 
 import PyQt5.QtCore as QtCore
@@ -50,14 +50,13 @@ class WRFViewerApp(QObject):
                 self.error_box.show()
 
     def initDatasetFile(self):
-        file_name, _ = QFileDialog.getOpenFileName(None, "Select dataset file", '.', "(*.hdf5)")
+        file_name, _ = QFileDialog.getOpenFileName(None, "Select dataset file", '.', "(*.nc)")
 
-        print(file_name)
         if file_name:
             try:
-                file = h5py.File(file_name)
+                file = Dataset(file_name, "r", format="NETCDF4")
 
                 self.data_file_set.emit(file_name)
             except:
-                self.error_box = ErrorBox('Invalid File', 'Could not open h5py file')
+                self.error_box = ErrorBox('Invalid File', 'Could not open nc file')
                 self.error_box.show()
