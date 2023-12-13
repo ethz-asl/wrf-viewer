@@ -143,6 +143,8 @@ class LayerPlotWidget(QWidget):
                 self.plotting_widget.updateLimits(float(val_min), float(val_max))
 
     def onScalingmodeChanged(self, mode):
+        self.data_interface.setScalingMode(mode)
+
         if mode == 'Custom':
             self.minlimit_box.setReadOnly(False)
             self.maxlimit_box.setReadOnly(False)
@@ -153,7 +155,6 @@ class LayerPlotWidget(QWidget):
                 self.plotting_widget.updateLimits(float(val_min), float(val_max))
 
         else:
-            self.data_interface.setScalingMode(mode)
             self.minlimit_box.setReadOnly(True)
             self.maxlimit_box.setReadOnly(True)
             self.data_interface.updateLimits()
