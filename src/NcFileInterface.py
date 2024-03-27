@@ -285,7 +285,6 @@ class NcFileInterface(QWidget):
             keys_dict = {}
 
             for i, time in enumerate(self.nc_file[case][model].variables['time'][:]):
-                datetime.utcfromtimestamp(time)
                 time_str = datetime.utcfromtimestamp(time).strftime("%Y-%m-%d_%H:%M:%S")
                 keys_dict[time_str] = i
                 times.append(time_str)
